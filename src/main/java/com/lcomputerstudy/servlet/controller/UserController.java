@@ -7,11 +7,11 @@ import com.lcomputerstudy.servlet.annotation.RequestMapping;
 public class UserController {
 	@RequestMapping("/board/list.do")
 	public String boardList() {
-		return null;
+		return "null 입니다~~~";
 	}
 	
 	@RequestMapping("/writeForm.do")
 	public String writeForm() {
-		return null;
+		return "write not nul!!~~";
 	}
 }

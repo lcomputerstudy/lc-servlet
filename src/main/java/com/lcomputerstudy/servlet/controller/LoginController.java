@@ -16,12 +16,12 @@ public class LoginController{
 	
 	@RequestMapping("/main.do")
 	public String test() {
-		return null;
+		return "ok test";
 	}
 	
 	@RequestMapping("/main2.do")
 	public String test2() {
-		return null;
+		return "main2~~~~";
 	}
 
 }
