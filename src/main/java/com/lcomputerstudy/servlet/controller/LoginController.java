@@ -19,14 +19,19 @@ public class LoginController{
 		System.out.println("main.do getParameter: "+param);
 		
 		User user = new User();
+		request.setAttribute("user", user);
 		String view = "/main.jsp";
+		ModelAndView mv = new ModelAndView();
 		
-		return new ModelAndView("ok test"+param);
+		mv.setModel(request);
+		mv.setView(view);
+		
+		return mv;
 	}
 	
 	@RequestMapping("/main2.do")
 	public ModelAndView test2(HttpServletRequest request, HttpServletResponse response) {
-		return new ModelAndView("main2~~~~");
+		return new ModelAndView();
 	}
 
 }

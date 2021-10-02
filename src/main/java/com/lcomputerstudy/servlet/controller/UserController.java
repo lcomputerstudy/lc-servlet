@@ -11,7 +11,7 @@ import com.lcomputerstudy.servlet.annotation.RequestMapping;
 public class UserController {
 	@RequestMapping("/board/list.do")
 	public ModelAndView boardList(HttpServletRequest request, HttpServletResponse response) {
-		return new ModelAndView("하이하이");
+		return new ModelAndView();
 	}
 	
 	@RequestMapping("/writeForm.do")

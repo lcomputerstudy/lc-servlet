@@ -2,6 +2,7 @@ package com.lcomputerstudy.servlet;
 
 import java.io.IOException;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,6 +13,7 @@ public class DispatcherServlet extends HttpServlet {
 	private static final long serialVersionUID = 2003781372535288855L;
 	
 	private HandlerMapping handlerMapping = null;
+	private ViewResolver viewResolver = null;
 	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -30,6 +32,7 @@ public class DispatcherServlet extends HttpServlet {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		viewResolver = new ViewResolver(config);
 	}
 	
 	@Override
@@ -58,11 +61,14 @@ public class DispatcherServlet extends HttpServlet {
 		processRequest(request, response);
 	}
 
-	protected void processRequest(HttpServletRequest request, HttpServletResponse response) {
+	protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("process");
 		
 		ModelAndView mv = handlerMapping.getController(request, response);
-		System.out.println("mv: " + mv);
+		String view = viewResolver.getView(mv.getView());
+		
+		RequestDispatcher rd = request.getRequestDispatcher(view);
+		rd.forward(mv.getModel(), response);
 	}
 	
 	

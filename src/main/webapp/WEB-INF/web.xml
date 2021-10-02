@@ -12,6 +12,14 @@
 			<param-name>componentScanPackage</param-name>
 			<param-value>com.lcomputerstudy.servlet</param-value>
 		</init-param>
+		<init-param>
+			<param-name>prefix</param-name>
+			<param-value></param-value>
+		</init-param>
+		<init-param>
+			<param-name>suffix</param-name>
+			<param-value>.jsp</param-value>
+		</init-param>
 		
 		<load-on-startup>1</load-on-startup>
 	</servlet>
