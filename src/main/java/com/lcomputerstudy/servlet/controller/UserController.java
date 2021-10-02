@@ -1,17 +1,21 @@
 package com.lcomputerstudy.servlet.controller;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.lcomputerstudy.servlet.ModelAndView;
 import com.lcomputerstudy.servlet.annotation.Controller;
 import com.lcomputerstudy.servlet.annotation.RequestMapping;
 
 @Controller
 public class UserController {
 	@RequestMapping("/board/list.do")
-	public String boardList() {
-		return "null 입니다~~~";
+	public ModelAndView boardList(HttpServletRequest request, HttpServletResponse response) {
+		return new ModelAndView("하이하이");
 	}
 	
 	@RequestMapping("/writeForm.do")
-	public String writeForm() {
-		return "write not nul!!~~";
+	public ModelAndView writeForm(HttpServletRequest request, HttpServletResponse response) {
+		return null;
 	}
 }
