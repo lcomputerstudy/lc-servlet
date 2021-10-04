@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+// Front Controller
 public class DispatcherServlet extends HttpServlet {
 	private static final long serialVersionUID = 2003781372535288855L;
 	
@@ -64,11 +65,15 @@ public class DispatcherServlet extends HttpServlet {
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("process");
 		
-		ModelAndView mv = handlerMapping.getController(request, response);
-		String view = viewResolver.getView(mv.getView());
+		response.setContentType("text/html; charset=utf-8");
+		request.setCharacterEncoding("utf-8");
+		
+		ModelAndView mv = new ModelAndView(request, response);
+		mv = handlerMapping.getController(mv);
+		String view = viewResolver.getFullPathView(mv.getView());
 		
 		RequestDispatcher rd = request.getRequestDispatcher(view);
-		rd.forward(mv.getModel(), response);
+		rd.forward(request, response);
 	}
 	
 	

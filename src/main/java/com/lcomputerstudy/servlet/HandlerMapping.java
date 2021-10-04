@@ -90,12 +90,12 @@ public class HandlerMapping {
 	    
 	}
 	
-	public ModelAndView getController(HttpServletRequest request, HttpServletResponse response) {
+	public ModelAndView getController(ModelAndView mv) {
+		HttpServletRequest request = mv.getRequest();
+		
 		String requestURI = request.getRequestURI();
 		String contextPath = request.getContextPath();
 		String uri = requestURI.substring(contextPath.length());
-		
-		ModelAndView mv = null;
 		
 		try {
 			Map<Object, String> ctrlMap = handlerMap.get(uri);
@@ -105,9 +105,9 @@ public class HandlerMapping {
 		    	Map.Entry<Object, String> entry = (Map.Entry<Object, String>)it.next();
 		    	Object instance = entry.getKey();
 		    	String methodName = entry.getValue();
-		    	Method method = instance.getClass().getMethod(methodName, HttpServletRequest.class, HttpServletResponse.class);
+		    	Method method = instance.getClass().getMethod(methodName, ModelAndView.class);
 		    	System.out.println("methodName: "+methodName);
-		    	mv = (ModelAndView)method.invoke(instance, request, response);
+		    	mv = (ModelAndView)method.invoke(instance, mv);
 		    }
 		} catch (Exception e) {
 			e.printStackTrace();

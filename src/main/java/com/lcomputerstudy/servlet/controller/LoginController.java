@@ -12,19 +12,18 @@ import com.lcomputerstudy.servlet.annotation.Controller;
 @Controller
 public class LoginController{
 	
-	@RequestMapping("/main.do")
-	public ModelAndView test(HttpServletRequest request, HttpServletResponse response) {
-		System.out.println("main.do request: "+request.getRequestURI());
+	@RequestMapping("/login.do")
+	public ModelAndView loginForm(ModelAndView mv) {
+		HttpServletRequest request = mv.getRequest();
+		
+		System.out.println("login.do request: "+request.getRequestURI());
 		String param = request.getParameter("test");
-		System.out.println("main.do getParameter: "+param);
+		System.out.println("login.do getParameter: "+param);
 		
 		User user = new User();
 		request.setAttribute("user", user);
-		String view = "/main.jsp";
-		ModelAndView mv = new ModelAndView();
-		
-		mv.setModel(request);
-		mv.setView(view);
+		System.out.println("login request: " + request + ", getParameter: " + request.getAttribute("user"));
+		mv.setView("/user/loginForm");
 		
 		return mv;
 	}

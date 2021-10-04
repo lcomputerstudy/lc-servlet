@@ -12,21 +12,17 @@ public class ModelAndView {
 		
 	}
 	
-	public ModelAndView(HttpServletRequest request) {
-		this(request, null);
-	}
-	
 	public ModelAndView(HttpServletRequest request, HttpServletResponse response) {
 		this.request = request;
 		this.response = response;
 	}
-	
-	public void setModel(HttpServletRequest request) {
+
+	public void setRequest(HttpServletRequest request) {
 		this.request = request;
 	}
 	
-	public HttpServletRequest getModel() {
-		return this.request;
+	public HttpServletRequest getRequest() {
+		return request;
 	}
 	
 	public void setResponse(HttpServletResponse response) {
@@ -34,7 +30,7 @@ public class ModelAndView {
 	}
 	
 	public HttpServletResponse getResponse() {
-		return this.response;
+		return response;
 	}
 
 	public void setView(String view) {
@@ -44,4 +40,5 @@ public class ModelAndView {
 	public String getView() {
 		return view;
 	}
+
 }

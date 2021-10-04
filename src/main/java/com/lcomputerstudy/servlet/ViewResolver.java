@@ -11,7 +11,7 @@ public class ViewResolver {
 		this.suffix = config.getInitParameter("suffix");
 	}
 
-	public String getView(String view) {
+	public String getFullPathView(String view) {
 		return this.prefix + view + this.suffix;
 	}
 

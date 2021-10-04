@@ -37,5 +37,13 @@
 		<param-name>dbPassword</param-name>
 		<param-value>1234</param-value>
 	</context-param>
-    
+	
+	<filter>
+		<filter-name>SessionFilter</filter-name>
+		<filter-class>com.lcomputerstudy.servlet.filter.SessionFilter</filter-class>
+	</filter>
+    <filter-mapping>
+    	<filter-name>SessionFilter</filter-name>
+    	<url-pattern>/*</url-pattern>
+    </filter-mapping>
 </web-app>

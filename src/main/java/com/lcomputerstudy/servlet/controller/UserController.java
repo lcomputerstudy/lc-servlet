@@ -10,12 +10,12 @@ import com.lcomputerstudy.servlet.annotation.RequestMapping;
 @Controller
 public class UserController {
 	@RequestMapping("/board/list.do")
-	public ModelAndView boardList(HttpServletRequest request, HttpServletResponse response) {
-		return new ModelAndView();
+	public ModelAndView boardList(ModelAndView mv) {
+		return mv;
 	}
 	
 	@RequestMapping("/writeForm.do")
-	public ModelAndView writeForm(HttpServletRequest request, HttpServletResponse response) {
-		return null;
+	public ModelAndView writeForm(ModelAndView mv) {
+		return mv;
 	}
 }
