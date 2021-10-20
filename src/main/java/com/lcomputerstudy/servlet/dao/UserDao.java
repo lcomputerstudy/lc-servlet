@@ -1,5 +1,5 @@
 package com.lcomputerstudy.servlet.dao;
 
-public class UserDao {
+public interface UserDao {
 
 }

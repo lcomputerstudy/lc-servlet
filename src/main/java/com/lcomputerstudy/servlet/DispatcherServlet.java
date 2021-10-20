@@ -21,18 +21,16 @@ public class DispatcherServlet extends HttpServlet {
 		super.init();
 		System.out.println("init()");
 		
+		// bean 생성 및 종속성 설정
+		ApplicationContext.init();
+		
 		/*ServletContext servletContext = config.getServletContext();
 		String dbId = servletContext.getInitParameter("dbId");
 		String dbPassword = servletContext.getInitParameter("dbPassword");
 		System.out.println(dbId);
 		System.out.println(dbPassword);*/
 		
-		handlerMapping = new HandlerMapping();
-		try {
-			handlerMapping.componentScan(config);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		handlerMapping = new HandlerMapping(config);
 		viewResolver = new ViewResolver(config);
 	}
 	
@@ -69,7 +67,10 @@ public class DispatcherServlet extends HttpServlet {
 		request.setCharacterEncoding("utf-8");
 		
 		ModelAndView mv = new ModelAndView(request, response);
-		mv = handlerMapping.getController(mv);
+		Controller controller = handlerMapping.getController(mv);
+		HandlerAdapter.run(controller, mv);
+		
+		// view redirect 도 가능하게 modelandview controller 에서 생성하여 전달 받도록 수정 필요
 		String view = viewResolver.getFullPathView(mv.getView());
 		
 		RequestDispatcher rd = request.getRequestDispatcher(view);

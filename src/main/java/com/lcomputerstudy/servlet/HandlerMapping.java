@@ -15,24 +15,52 @@ import java.util.Set;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import com.lcomputerstudy.servlet.annotation.Controller;
 import com.lcomputerstudy.servlet.annotation.RequestMapping;
 
 public class HandlerMapping {
 	
 	private Map<String, Map<Object, String>> handlerMap = null;
-		
-	public HandlerMapping() {
-		System.out.println("handlermapping 생성");
+	
+	public HandlerMapping(ServletConfig config) {
+		generateHandlerMap(config);
 	}
 	
-	public void componentScan(ServletConfig config) {
-		System.out.println("Component Scan");
+	public Controller getController(ModelAndView mv) {
+		HttpServletRequest request = mv.getRequest();
+		
+		String requestURI = request.getRequestURI();
+		String contextPath = request.getContextPath();
+		String uri = requestURI.substring(contextPath.length());
+		
+		Controller controller = null;
 		
 		try {
-			String packageName = config.getInitParameter("componentScanPackage");
+			Map<Object, String> ctrlMap = handlerMap.get(uri);
+		    Set<Map.Entry<Object, String>> ctrlSet = ctrlMap.entrySet();
+		    Iterator<Map.Entry<Object, String>> it = ctrlSet.iterator();
+		    if (it.hasNext()) {
+		    	Map.Entry<Object, String> entry = (Map.Entry<Object, String>)it.next();		    	
+		    	
+				Object instance = entry.getKey();
+		    	String methodName = entry.getValue();
+		    	Method method = instance.getClass().getMethod(methodName, ModelAndView.class);
+		    	
+		    	controller = new Controller();
+		    	controller.setInstance(instance);
+		    	controller.setMethodName(methodName);
+		    	controller.setMethod(method);
+		    }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return controller;
+	}
+	
+	public void generateHandlerMap(ServletConfig config) {
+		try {
+			String packageName = config.getInitParameter("controllerPackage");
 			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		    String path = packageName.replace('.', '/');
 		    
@@ -87,33 +115,6 @@ public class HandlerMapping {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	    
-	}
-	
-	public ModelAndView getController(ModelAndView mv) {
-		HttpServletRequest request = mv.getRequest();
-		
-		String requestURI = request.getRequestURI();
-		String contextPath = request.getContextPath();
-		String uri = requestURI.substring(contextPath.length());
-		
-		try {
-			Map<Object, String> ctrlMap = handlerMap.get(uri);
-		    Set<Map.Entry<Object, String>> ctrlSet = ctrlMap.entrySet();
-		    Iterator<Map.Entry<Object, String>> it = ctrlSet.iterator();
-		    while (it.hasNext()) {
-		    	Map.Entry<Object, String> entry = (Map.Entry<Object, String>)it.next();
-		    	Object instance = entry.getKey();
-		    	String methodName = entry.getValue();
-		    	Method method = instance.getClass().getMethod(methodName, ModelAndView.class);
-		    	System.out.println("methodName: "+methodName);
-		    	mv = (ModelAndView)method.invoke(instance, mv);
-		    }
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		return mv;
 	}
 	
 	private List<Class<?>> findClasses(File directory, String packageName) throws ClassNotFoundException {
