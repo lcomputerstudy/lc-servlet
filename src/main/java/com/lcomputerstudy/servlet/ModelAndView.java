@@ -7,6 +7,7 @@ public class ModelAndView {
 	private HttpServletRequest request = null;
 	private HttpServletResponse response = null;
 	private String view = null;
+	private String redirectUri = null;
 	
 	public ModelAndView() {
 		
@@ -39,6 +40,14 @@ public class ModelAndView {
 	
 	public String getView() {
 		return view;
+	}
+
+	public String getRedirectUri() {
+		return redirectUri;
+	}
+
+	public void setRedirectUri(String redirectUri) {
+		this.redirectUri = redirectUri;
 	}
 
 }

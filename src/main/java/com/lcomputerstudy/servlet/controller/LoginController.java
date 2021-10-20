@@ -29,8 +29,9 @@ public class LoginController{
 	}
 	
 	@RequestMapping("/main2.do")
-	public ModelAndView test2(HttpServletRequest request, HttpServletResponse response) {
-		return new ModelAndView();
+	public ModelAndView test2(ModelAndView mv) {
+		mv.setRedirectUri("/uritest.do");
+		return mv;
 	}
 
 }

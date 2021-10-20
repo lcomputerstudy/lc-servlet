@@ -70,11 +70,7 @@ public class DispatcherServlet extends HttpServlet {
 		Controller controller = handlerMapping.getController(mv);
 		HandlerAdapter.run(controller, mv);
 		
-		// view redirect 도 가능하게 modelandview controller 에서 생성하여 전달 받도록 수정 필요
-		String view = viewResolver.getFullPathView(mv.getView());
-		
-		RequestDispatcher rd = request.getRequestDispatcher(view);
-		rd.forward(request, response);
+		viewResolver.view(mv);
 	}
 	
 	
