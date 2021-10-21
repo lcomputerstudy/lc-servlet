@@ -1,4 +1,4 @@
-package com.lcomputerstudy.servlet.controller;
+package com.lcomputerstudy.demo.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

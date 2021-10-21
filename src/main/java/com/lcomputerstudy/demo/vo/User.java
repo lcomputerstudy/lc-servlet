@@ -1,4 +1,4 @@
-package com.lcomputerstudy.servlet.vo;
+package com.lcomputerstudy.demo.vo;
 
 public class User {
 	private String userId;
@@ -16,4 +16,10 @@ public class User {
 	public void setUserPassword(String userPassword) {
 		this.userPassword = userPassword;
 	}
+	@Override
+	public String toString() {
+		return "User [userId=" + userId + ", userPassword=" + userPassword + "]";
+	}
+	
+	
 }

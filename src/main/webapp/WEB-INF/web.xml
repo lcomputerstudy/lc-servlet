@@ -10,7 +10,7 @@
         
         <init-param>
 			<param-name>controllerPackage</param-name>
-			<param-value>com.lcomputerstudy.servlet</param-value>
+			<param-value>com.lcomputerstudy.demo.controller</param-value>
 		</init-param>
 		<init-param>
 			<param-name>prefix</param-name>

@@ -19,7 +19,7 @@ public class DispatcherServlet extends HttpServlet {
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init();
-		System.out.println("init()");
+		System.out.println("DispatcherServlet (FrontController)");
 		
 		// bean 생성 및 종속성 설정
 		ApplicationContext.init();
@@ -30,20 +30,14 @@ public class DispatcherServlet extends HttpServlet {
 		System.out.println(dbId);
 		System.out.println(dbPassword);*/
 		
-		handlerMapping = new HandlerMapping(config);
-		viewResolver = new ViewResolver(config);
+		HandlerMapping.init(config);
+		ViewResolver.init(config);
 	}
 	
 	@Override
 	protected void service(HttpServletRequest arg0, HttpServletResponse arg1) throws ServletException, IOException {
-		super.service(arg0, arg1);
 		System.out.println("service()");
-	}
-
-	@Override
-	public void destroy() {
-		super.destroy();
-		System.out.println("destroy()");
+		super.service(arg0, arg1);
 	}
 
 	@Override
@@ -60,20 +54,40 @@ public class DispatcherServlet extends HttpServlet {
 		processRequest(request, response);
 	}
 
-	protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("process");
-		
+	protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
 		response.setContentType("text/html; charset=utf-8");
 		request.setCharacterEncoding("utf-8");
 		
 		ModelAndView mv = new ModelAndView(request, response);
-		Controller controller = handlerMapping.getController(mv);
-		HandlerAdapter.run(controller, mv);
-		
-		viewResolver.view(mv);
+		ControllerAdapter controller = HandlerMapping.getController(mv);
+		mv = HandlerAdapter.execute(controller, mv);
+		ViewResolver.setView(mv);
+		forwardOrRedirect(mv);
 	}
 	
+	public static void forwardOrRedirect(ModelAndView mv) {
+		HttpServletRequest request = mv.getRequest();
+		HttpServletResponse response = mv.getResponse();
+		String redirectUri = mv.getRedirectUri();
+		
+		try {
+			if (redirectUri == null) {
+				String view = mv.getView().getFullPathView();
+				RequestDispatcher rd = request.getRequestDispatcher(view);
+				rd.forward(request, response);
+			} else {
+				response.sendRedirect(redirectUri);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
+	@Override
+	public void destroy() {
+		super.destroy();
+		System.out.println("destroy()");
+	}
 	
 	
 }

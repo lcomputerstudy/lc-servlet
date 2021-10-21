@@ -1,6 +1,6 @@
-package com.lcomputerstudy.servlet.service;
+package com.lcomputerstudy.demo.service;
 
-import com.lcomputerstudy.servlet.dao.UserDao;
+import com.lcomputerstudy.demo.dao.UserDao;
 
 public class UserService {
 	private static UserDao userDao = null;

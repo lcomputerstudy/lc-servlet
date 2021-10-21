@@ -2,7 +2,7 @@ package com.lcomputerstudy.servlet;
 
 import java.lang.reflect.Method;
 
-public class Controller {
+public class ControllerAdapter {
 	private Object instance = null;
 	private String methodName = null;
 	private Method method = null;

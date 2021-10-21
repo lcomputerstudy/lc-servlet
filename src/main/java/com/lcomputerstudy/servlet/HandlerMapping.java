@@ -16,49 +16,14 @@ import java.util.Set;
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 
+import com.lcomputerstudy.servlet.annotation.Controller;
 import com.lcomputerstudy.servlet.annotation.RequestMapping;
 
 public class HandlerMapping {
 	
-	private Map<String, Map<Object, String>> handlerMap = null;
+	private static Map<String, Map<Object, String>> handlerMap = null;
 	
-	public HandlerMapping(ServletConfig config) {
-		generateHandlerMap(config);
-	}
-	
-	public Controller getController(ModelAndView mv) {
-		HttpServletRequest request = mv.getRequest();
-		
-		String requestURI = request.getRequestURI();
-		String contextPath = request.getContextPath();
-		String uri = requestURI.substring(contextPath.length());
-		
-		Controller controller = null;
-		
-		try {
-			Map<Object, String> ctrlMap = handlerMap.get(uri);
-		    Set<Map.Entry<Object, String>> ctrlSet = ctrlMap.entrySet();
-		    Iterator<Map.Entry<Object, String>> it = ctrlSet.iterator();
-		    if (it.hasNext()) {
-		    	Map.Entry<Object, String> entry = (Map.Entry<Object, String>)it.next();		    	
-		    	
-				Object instance = entry.getKey();
-		    	String methodName = entry.getValue();
-		    	Method method = instance.getClass().getMethod(methodName, ModelAndView.class);
-		    	
-		    	controller = new Controller();
-		    	controller.setInstance(instance);
-		    	controller.setMethodName(methodName);
-		    	controller.setMethod(method);
-		    }
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		return controller;
-	}
-	
-	public void generateHandlerMap(ServletConfig config) {
+	public static void init(ServletConfig config) {
 		try {
 			String packageName = config.getInitParameter("controllerPackage");
 			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -106,7 +71,7 @@ public class HandlerMapping {
 		    }
 	    
 		    // stream test
-		    System.out.println("using Stream");
+		    System.out.println("HandlerMapping 에 매핑된 Controller 목록:");
 		    handlerMap.entrySet().stream().forEach( 
 		    		m->m.getValue().entrySet().stream().forEach( 
 		    				m2->System.out.printf("url: %-20s class: %-70s method: %-20s%n", m.getKey(), m2.getKey(), m2.getValue()) 
@@ -117,7 +82,42 @@ public class HandlerMapping {
 		}
 	}
 	
-	private List<Class<?>> findClasses(File directory, String packageName) throws ClassNotFoundException {
+	public static ControllerAdapter getController(ModelAndView mv) {
+		System.out.println("HandlerMapping 이 요청 URI에 해당하는 Controller 를 반환");
+		HttpServletRequest request = mv.getRequest();
+		
+		String requestURI = request.getRequestURI();
+		String contextPath = request.getContextPath();
+		String uri = requestURI.substring(contextPath.length());
+		
+		ControllerAdapter controller = null;
+		
+		try {
+			Map<Object, String> ctrlMap = handlerMap.get(uri);
+		    Set<Map.Entry<Object, String>> ctrlSet = ctrlMap.entrySet();
+		    Iterator<Map.Entry<Object, String>> it = ctrlSet.iterator();
+		    if (it.hasNext()) {
+		    	Map.Entry<Object, String> entry = (Map.Entry<Object, String>)it.next();		    	
+		    	
+				Object instance = entry.getKey();
+		    	String methodName = entry.getValue();
+		    	Method method = instance.getClass().getMethod(methodName, ModelAndView.class);
+		    	
+		    	controller = new ControllerAdapter();
+		    	controller.setInstance(instance);
+		    	controller.setMethodName(methodName);
+		    	controller.setMethod(method);
+		    }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return controller;
+	}
+	
+	
+	
+	private static List<Class<?>> findClasses(File directory, String packageName) throws ClassNotFoundException {
 	    List<Class<?>> classes = new ArrayList<Class<?>>();
 	    if (!directory.exists()) {
 	        return classes;

@@ -6,11 +6,12 @@ import javax.servlet.http.HttpServletResponse;
 public class ModelAndView {
 	private HttpServletRequest request = null;
 	private HttpServletResponse response = null;
-	private String view = null;
+	private String viewName = null;
 	private String redirectUri = null;
+	private View view = null;
 	
 	public ModelAndView() {
-		
+		System.out.println("ModelAndView");
 	}
 	
 	public ModelAndView(HttpServletRequest request, HttpServletResponse response) {
@@ -34,11 +35,19 @@ public class ModelAndView {
 		return response;
 	}
 
-	public void setView(String view) {
+	public void setViewName(String viewName) {
+		this.viewName = viewName;
+	}
+	
+	public String getViewName() {
+		return viewName;
+	}
+	
+	public void setView(View view) {
 		this.view = view;
 	}
 	
-	public String getView() {
+	public View getView() {
 		return view;
 	}
 
