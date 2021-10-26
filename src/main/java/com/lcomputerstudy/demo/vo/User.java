@@ -2,6 +2,7 @@ package com.lcomputerstudy.demo.vo;
 
 public class User {
 	private String userId;
+	private String userName;
 	private String userPassword;
 	
 	public String getUserId() {
@@ -15,6 +16,12 @@ public class User {
 	}
 	public void setUserPassword(String userPassword) {
 		this.userPassword = userPassword;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 	@Override
 	public String toString() {
