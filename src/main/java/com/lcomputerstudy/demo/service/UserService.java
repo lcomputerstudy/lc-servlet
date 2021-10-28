@@ -1,5 +1,7 @@
 package com.lcomputerstudy.demo.service;
 
+import java.util.List;
+
 import com.lcomputerstudy.demo.dao.UserDao;
 import com.lcomputerstudy.demo.vo.User;
 
@@ -11,7 +13,11 @@ public class UserService {
 		this.userDao = userDao;
 	}
 	
-	public void insertUser(User user) {
-		userDao.insertUser(user);
+	public void addUser(User user) {
+		userDao.addUser(user);
+	}
+	
+	public List<User> getUser(String userId) {
+		return userDao.getUser(userId);
 	}
 }

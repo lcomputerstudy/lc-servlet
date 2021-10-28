@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.lcomputerstudy.database.DataSource;
 import com.lcomputerstudy.servlet.exception.RuntimeSQLException;
@@ -20,8 +22,9 @@ public class JdbcTemplate {
 	
 	
 	// client
-	public void update(String query, Object[] param) {
-		templatePreparedStatement(new StatementStrategy() {
+	public <T> void update(String query, Object[] param) {
+		templatePreparedStatement(new StatementStrategyAdapter<T>() {
+			@Override
 			public PreparedStatement getPreparedStatement(Connection conn) throws SQLException {
 				PreparedStatement pstmt = conn.prepareStatement(query);
 				
@@ -29,14 +32,17 @@ public class JdbcTemplate {
 					setObject(pstmt, i+1, param[i]);
 				}
 				
+				pstmt.executeUpdate();
+				
 				return pstmt;
 			}
 		});
 	}
 
-	// client	작업 필요
-	public void query(String query, Object[] param) {
-		templatePreparedStatement(new StatementStrategy() {
+	// client 작업 필요
+	public <T> List<T> query(String query, Object[] param, ResultMapper<T> mapper) {
+		List<T> list = templatePreparedStatement(new StatementStrategyAdapter<T>() {
+			@Override
 			public PreparedStatement getPreparedStatement(Connection conn) throws SQLException {
 				PreparedStatement pstmt = conn.prepareStatement(query);
 				
@@ -46,27 +52,47 @@ public class JdbcTemplate {
 					
 				return pstmt;
 			}
+			
+			@Override
+			public List<T> getResult(PreparedStatement pstmt) throws SQLException {
+				ResultSet rs = pstmt.executeQuery();
+				
+				List<T> list = new ArrayList<T>();
+				while (rs.next()) {
+					T vo = null;
+					vo = mapper.resultMap(rs);
+					
+					list.add(vo);
+				}
+				
+				if (rs != null) rs.close();
+				
+				return list;
+			}
+			
 		});
+		
+		return list;
 	}
 	
 	// template
-	public void templatePreparedStatement(StatementStrategy strategy) throws RuntimeSQLException {
+	public <T> List<T> templatePreparedStatement(StatementStrategy<T> strategy) throws RuntimeSQLException {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
-		ResultSet rs = null;
 
 		try {
 			conn = dataSource.getConnection();
 			pstmt = strategy.getPreparedStatement(conn);
-			pstmt.executeUpdate();
+			List<T> list = strategy.getResult(pstmt);
+			if (list != null)
+				return list;
+			return null;
 		} catch (SQLException e) {
+			e.printStackTrace();
 			throw new RuntimeSQLException(e);
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeSQLException(e);
 		} finally {
-			if (rs != null ) {
-				try { rs.close(); } catch (SQLException e) { throw new RuntimeSQLException(e); }
-			}
 			if (pstmt != null) { 
 				try { pstmt.close(); } catch (SQLException e) { throw new RuntimeSQLException(e); } 
 			}

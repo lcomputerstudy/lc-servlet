@@ -2,6 +2,8 @@ package com.lcomputerstudy.demo.controller;
 
 import com.lcomputerstudy.servlet.annotation.RequestMapping;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.lcomputerstudy.demo.service.UserService;
@@ -29,10 +31,18 @@ public class LoginController{
 		user.setUserId("test1");
 		user.setUserPassword("1234");
 		user.setUserName("kim");
-		userService.insertUser(user);
+		user.setUserAge(20);
+		userService.addUser(user);
 		System.out.println("insert user");
 		
+		List<User> list = userService.getUser(user.getUserId());
+		
+		System.out.println(list);
+		System.out.println("select user list");
+		
 		request.setAttribute("user", user);
+		request.setAttribute("list", list);
+		
 		System.out.println("login request: " + request + ", getParameter: " + request.getAttribute("user"));
 		mv.setViewName("/user/loginForm"); 
 		
