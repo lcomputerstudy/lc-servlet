@@ -27,11 +27,7 @@ public class JdbcTemplate {
 			@Override
 			public PreparedStatement getPreparedStatement(Connection conn) throws SQLException {
 				PreparedStatement pstmt = conn.prepareStatement(query);
-				
-				for (int i=0; i<param.length; i++) {
-					setObject(pstmt, i+1, param[i]);
-				}
-				
+				setObjectForArray(pstmt, param);
 				pstmt.executeUpdate();
 				
 				return pstmt;
@@ -39,16 +35,13 @@ public class JdbcTemplate {
 		});
 	}
 
-	// client 작업 필요
+	// client
 	public <T> List<T> query(String query, Object[] param, ResultMapper<T> mapper) {
 		List<T> list = templatePreparedStatement(new StatementStrategyAdapter<T>() {
 			@Override
 			public PreparedStatement getPreparedStatement(Connection conn) throws SQLException {
-				PreparedStatement pstmt = conn.prepareStatement(query);
-				
-				for (int i=0; i<param.length; i++) {
-					setObject(pstmt, i+1, param[i]);
-				}
+				PreparedStatement pstmt = conn.prepareStatement(query);				
+				setObjectForArray(pstmt, param);
 					
 				return pstmt;
 			}
@@ -56,16 +49,7 @@ public class JdbcTemplate {
 			@Override
 			public List<T> getResult(PreparedStatement pstmt) throws SQLException {
 				ResultSet rs = pstmt.executeQuery();
-				
-				List<T> list = new ArrayList<T>();
-				while (rs.next()) {
-					T vo = null;
-					vo = mapper.resultMap(rs);
-					
-					list.add(vo);
-				}
-				
-				if (rs != null) rs.close();
+				List<T> list = getList(rs, mapper);
 				
 				return list;
 			}
@@ -102,25 +86,41 @@ public class JdbcTemplate {
 		}
 	}
 	
-	public void setObject(PreparedStatement pstmt, int index, Object obj)
-		    throws SQLException {
-	  	if (obj instanceof String) {
-	  		pstmt.setString(index, (String)obj);
-	  	} else if (obj instanceof Integer) {
-	  		pstmt.setInt(index, (Integer)obj);
-	  	} else if (obj instanceof Timestamp) {
-	  		pstmt.setTimestamp(index, (Timestamp)obj);
-	  	} else if (obj instanceof Long) {
-	  		pstmt.setLong(index, (Long)obj);
-	  	} else if (obj instanceof Array) {
-	  		pstmt.setArray(index, (Array)obj);
-	  	} else if (obj instanceof Float) {
-	  		pstmt.setFloat(index, (Float)obj);
-  		} else if (obj instanceof Double) {
-	  		pstmt.setDouble(index, (Double)obj);
-  		} else {
-	  		throw new IllegalArgumentException();
+	// util
+	public void setObjectForArray(PreparedStatement pstmt, Object[] param) throws SQLException {
+		for (int i=0, index=1; i<param.length; i++, index++) {
+		  	if (param[i] instanceof String) {
+		  		pstmt.setString(index, (String)param[i]);
+		  	} else if (param[i] instanceof Integer) {
+		  		pstmt.setInt(index, (Integer)param[i]);
+		  	} else if (param[i] instanceof Timestamp) {
+		  		pstmt.setTimestamp(index, (Timestamp)param[i]);
+		  	} else if (param[i] instanceof Long) {
+		  		pstmt.setLong(index, (Long)param[i]);
+		  	} else if (param[i] instanceof Array) {
+		  		pstmt.setArray(index, (Array)param[i]);
+		  	} else if (param[i] instanceof Float) {
+		  		pstmt.setFloat(index, (Float)param[i]);
+	  		} else if (param[i] instanceof Double) {
+		  		pstmt.setDouble(index, (Double)param[i]);
+	  		} else {
+		  		throw new IllegalArgumentException();
+			}
 		}
-	}	
+	}
+	
+	// util
+	public <T> List<T> getList(ResultSet rs, ResultMapper<T> mapper) throws SQLException {
+		List<T> list = new ArrayList<T>();
+		while (rs.next()) {
+			T vo = null;
+			vo = mapper.resultMap(rs);
+			
+			list.add(vo);
+		}
+		if (rs != null) rs.close();
+		
+		return list;
+	}
 
 }
