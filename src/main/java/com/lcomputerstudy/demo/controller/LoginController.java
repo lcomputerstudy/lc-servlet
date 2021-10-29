@@ -1,16 +1,15 @@
 package com.lcomputerstudy.demo.controller;
 
-import com.lcomputerstudy.servlet.annotation.RequestMapping;
-
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.lcomputerstudy.demo.service.UserService;
 import com.lcomputerstudy.demo.vo.User;
-import com.lcomputerstudy.servlet.ApplicationContext;
-import com.lcomputerstudy.servlet.ModelAndView;
-import com.lcomputerstudy.servlet.annotation.Controller;
+import com.lcomputerstudy.lcomputerframework.ApplicationContext;
+import com.lcomputerstudy.lcomputerframework.ModelAndView;
+import com.lcomputerstudy.lcomputerframework.annotation.Controller;
+import com.lcomputerstudy.lcomputerframework.annotation.RequestMapping;
 
 @Controller
 public class LoginController{

@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.lcomputerstudy.demo.vo.User;
+import com.lcomputerstudy.lcomputerframework.jdbc.JdbcTemplate;
+import com.lcomputerstudy.lcomputerframework.jdbc.ResultMapper;
 
 public class UserDaoImpl implements UserDao {
 	private JdbcTemplate jdbcTemplate = null;

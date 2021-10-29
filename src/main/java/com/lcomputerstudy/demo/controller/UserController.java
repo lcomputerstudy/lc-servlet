@@ -3,9 +3,9 @@ package com.lcomputerstudy.demo.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.lcomputerstudy.servlet.ModelAndView;
-import com.lcomputerstudy.servlet.annotation.Controller;
-import com.lcomputerstudy.servlet.annotation.RequestMapping;
+import com.lcomputerstudy.lcomputerframework.ModelAndView;
+import com.lcomputerstudy.lcomputerframework.annotation.Controller;
+import com.lcomputerstudy.lcomputerframework.annotation.RequestMapping;
 
 @Controller
 public class UserController {
