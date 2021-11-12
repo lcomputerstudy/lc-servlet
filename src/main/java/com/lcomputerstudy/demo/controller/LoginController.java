@@ -1,5 +1,6 @@
 package com.lcomputerstudy.demo.controller;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +32,7 @@ public class LoginController{
 		user.setUserPassword("1234");
 		user.setUserName("kim");
 		user.setUserAge(20);
+		user.setUserDatetime(new Timestamp(System.currentTimeMillis()));
 		userService.addUser(user);
 		System.out.println("insert user");
 		

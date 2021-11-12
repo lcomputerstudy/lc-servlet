@@ -19,6 +19,8 @@ public class UserDaoImpl implements UserDao {
 			user.setUserPassword(rs.getString("u_password"));
 			user.setUserName(rs.getString("u_name"));
 			user.setUserAge(rs.getInt("u_age"));
+			user.setUserDatetime(rs.getTimestamp("u_datetime"));
+			
 			return user;
 		}
 	};
@@ -28,12 +30,13 @@ public class UserDaoImpl implements UserDao {
 	}
 	
 	public void addUser(User user) {
-		jdbcTemplate.update("insert into lc_user (u_id, u_password, u_name, u_age) value (?, ?, ?, ?)", 
+		jdbcTemplate.update("insert into lc_user (u_id, u_password, u_name, u_age, u_datetime) value (?, ?, ?, ?, ?)", 
 						new Object [] { 
 								user.getUserId(), 
 								user.getUserPassword(), 
 								user.getUserName(), 
-								user.getUserAge() 
+								user.getUserAge(),
+								user.getUserDatetime()
 						});
 	}
 	
