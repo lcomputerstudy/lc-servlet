@@ -43,45 +43,77 @@ public class HandlerMapping {
 		    }
 		    
 		    handlerMap = new HashMap<String, Map<Object, String>>();
-		    for (Class<?> clazz : classes) {
-		    	Annotation[] ctrlAnnos = clazz.getAnnotations();
-		    	for (Annotation ctrlAnno : ctrlAnnos) {
-					if (ctrlAnno instanceof Controller) {
-						Method[] methods = clazz.getDeclaredMethods();
-						for (Method method : methods) {
-							Annotation[] annos = method.getAnnotations();
-							for (Annotation anno : annos) {
-								if (anno instanceof RequestMapping) {
-									// reflection
-									RequestMapping rmAnno = (RequestMapping)anno;
-									String uri = rmAnno.value();
-									String methodName = method.getName();
-									Class<?> cls = Class.forName(clazz.getName());
-									Object instance = cls.newInstance();
-									//System.out.printf("url: %20s, class: %20s, method: %s%n", uri, clazz.getSimpleName(), methodName);
-									
-									Map<Object, String> ctrlMap = new HashMap<Object, String>();
-									ctrlMap.put(instance, methodName);
-									handlerMap.put(uri, ctrlMap);
-								}
-							}
-						}
-					}
-		    	}
-		    }
+		    
+		    scanHandlerMapping(classes);
 	    
-		    // stream test
-		    System.out.println("HandlerMapping 에 매핑된 Controller 목록:");
-		    handlerMap.entrySet().stream().forEach( 
-		    		m->m.getValue().entrySet().stream().forEach( 
-		    				m2->System.out.printf("url: %-20s class: %-70s method: %-20s%n", m.getKey(), m2.getKey(), m2.getValue()) 
-		    		)
-		    );
+		    printHandlerMapping();
+		    
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
+	private static void printHandlerMapping() {
+		// stream test
+	    System.out.println("HandlerMapping 에 매핑된 Controller 목록:");
+	    handlerMap.entrySet().stream().forEach( 
+	    		m->m.getValue().entrySet().stream().forEach( 
+	    				m2->System.out.printf("url: %-20s class: %-70s method: %-20s%n", m.getKey(), m2.getKey(), m2.getValue()) 
+	    		)
+	    );
+	}
+
+	private static void scanHandlerMapping(List<Class<?>> classes) {
+		for (Class<?> clazz : classes) {
+	    	getMethodsFromAnnotation(clazz);
+		}
+	}
+
+	private static void getMethodsFromAnnotation(Class<?> clazz) {
+		for (Annotation anno : clazz.getAnnotations()) {
+			if (anno instanceof Controller) {
+				getAnnotationsFromMethod(clazz);
+			}
+		}
+	}
+
+	private static void getAnnotationsFromMethod(Class<?> clazz) {
+		for (Method method : clazz.getDeclaredMethods()) {
+			
+			HandlerItem item = new HandlerItem();
+			item.setClazz(clazz);
+			item.setMethod(method);
+			
+			getRequestMapping(item);
+		}
+	}
+
+	private static void getRequestMapping(HandlerItem item) {
+		for (Annotation anno : item.getMethod().getAnnotations()) {
+			item.setAnnotation(anno);
+			setHandlerMapping(item);
+		}
+	}
+
+	private static void setHandlerMapping(HandlerItem item) {
+		Annotation anno = item.getAnnotation();
+		if (anno instanceof RequestMapping) {			
+			try {
+				handlerMap.put(((RequestMapping)anno).value(), setControllerMap(item));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private static Map<Object, String> setControllerMap(HandlerItem item) throws Exception {
+		Map<Object, String> map = new HashMap<Object, String>();
+		
+		map.put(item.getClazz().newInstance(), item.getMethod().getName());
+		
+		return map; 
+	}
+
 	public static ControllerAdapter getController(ModelAndView mv) {
 		System.out.println("HandlerMapping 이 요청 URI에 해당하는 Controller 를 반환");
 		HttpServletRequest request = mv.getRequest();
@@ -114,8 +146,6 @@ public class HandlerMapping {
 		
 		return controller;
 	}
-	
-	
 	
 	private static List<Class<?>> findClasses(File directory, String packageName) throws ClassNotFoundException {
 	    List<Class<?>> classes = new ArrayList<Class<?>>();
